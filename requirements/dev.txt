@@ -1,0 +1,6 @@
+-r common.txt
+# A-Z
+flake8~=4.0.1
+maturin~=0.12.6
+mypy==0.930
+pytest~=6.2.5
