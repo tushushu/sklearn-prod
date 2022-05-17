@@ -1,29 +1,33 @@
-use numpy::ndarray::Array1;
 use numpy::PyReadonlyArray1;
 use pyo3::prelude::*;
 use std::collections::HashMap;
 
 #[pyclass]
 pub struct LinearRegression {
-    coef: Array1<f64>,
-    col_nm: Vec<String>,
+    mapping: HashMap<String, f64>,
 }
 
 #[pymethods]
 impl LinearRegression {
     #[new]
-    pub fn new(coef: PyReadonlyArray1<f64>, col_nm: Vec<String>) -> Self {
-        LinearRegression {
-            coef: coef.to_owned_array(),
-            col_nm: col_nm,
-        }
+    pub fn new(coef: PyReadonlyArray1<f64>, col_nm: Vec<&str>) -> Self {
+        let mapping: HashMap<String, f64> = col_nm
+            .iter()
+            .zip(coef.to_owned_array().iter())
+            .map(|(key, val)| (key.to_string(), *val))
+            .collect();
+        LinearRegression { mapping: mapping }
     }
 
     pub fn predict_json(&self, x: HashMap<String, f64>) -> f64 {
-        x.len();
-        self.coef.len();
-        self.col_nm.len();
-        1.0
+        if x.len() != self.mapping.len() {
+            panic!(format!("Expect the length of x is {}!", self.mapping.len()));
+        }
+        let mut ret: f64 = 0.0;
+        for (key, val) in x.iter() {
+            ret += val * self.mapping.get(key).unwrap();
+        }
+        ret
     }
 }
 
