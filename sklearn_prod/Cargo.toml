@@ -1,0 +1,16 @@
+[package]
+name = "sklearn_prod"
+version = "0.1.0"
+authors = ["tushushu"]
+edition = "2018"
+
+[lib]
+name = "sklearn_prod"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.16", features = ["extension-module"] }
+numpy = "0.16"
+
+[package.metadata.maturin]
+python-source = "python"
