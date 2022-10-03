@@ -75,6 +75,6 @@ def test_exceptions(
     x: Dict[str, float],
     expected_error: Exception,
 ) -> None:
-    with pytest.raises(expected_error):
+    with pytest.raises(expected_error):  # type: ignore
         regr = skp.LinearRegression(coefs)
         regr.predict(x)
