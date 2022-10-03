@@ -1,0 +1,39 @@
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on pull request and release events
+  pull_request:
+  release:
+    types: [published]
+
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+
+jobs:
+  linters:
+    strategy:
+      matrix:
+        python-version: ['3.10']
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          default: true
+      - name: Install Python packages
+        run: |
+          pip install -r ./requirements/dev.txt
+      - name: Python UnitTest
+        run: |
+          cd tests
+          sh test.sh
